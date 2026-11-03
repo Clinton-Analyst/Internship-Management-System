@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-bold">Tracks</h1>
+  <a class="bg-green-700 text-white px-3 py-2 rounded" href="{% url 'track_new' %}">Add track</a>
+</div>
+<div class="bg-white rounded shadow overflow-x-auto">
+  <table class="w-full text-sm">
+    <tr class="bg-gray-50 text-left"><th class="p-3">Track</th><th>Description</th><th>Status</th><th></th></tr>
+    {% for track in tracks %}
+      <tr class="border-t">
+        <td class="p-3">{{ track.name }}</td>
+        <td>{{ track.description|default:"—" }}</td>
+        <td>{% if track.is_active %}Active{% else %}Inactive{% endif %}</td>
+        <td><a class="text-green-700 underline" href="{% url 'track_edit' track.pk %}">Edit</a></td>
+      </tr>
+    {% empty %}
+      <tr><td class="p-3 text-gray-500" colspan="4">No tracks yet.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-bold">Supervisors</h1>
+  <a class="bg-green-700 text-white px-3 py-2 rounded" href="{% url 'supervisor_new' %}">Add supervisor</a>
+</div>
+<div class="bg-white rounded shadow overflow-x-auto">
+  <table class="w-full text-sm">
+    <tr class="bg-gray-50 text-left"><th class="p-3">Supervisor</th><th>Email</th><th>Organisation</th><th>Phone</th><th></th></tr>
+    {% for supervisor in supervisors %}
+      <tr class="border-t">
+        <td class="p-3">{{ supervisor.user.display_name }}</td>
+        <td>{{ supervisor.user.email }}</td>
+        <td>{{ supervisor.organisation|default:"—" }}</td>
+        <td>{{ supervisor.phone|default:"—" }}</td>
+        <td><a class="text-green-700 underline" href="{% url 'supervisor_edit' supervisor.pk %}">Edit</a></td>
+      </tr>
+    {% empty %}
+      <tr><td class="p-3 text-gray-500" colspan="5">No supervisors yet.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

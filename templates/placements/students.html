@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-bold">Students</h1>
+</div>
+<div class="bg-white rounded shadow overflow-x-auto">
+  <table class="w-full text-sm">
+    <tr class="bg-gray-50 text-left"><th class="p-3">Student</th><th>Registration number</th><th>Programme</th><th>Department</th><th>Track</th><th></th></tr>
+    {% for student in students %}
+      <tr class="border-t">
+        <td class="p-3">{{ student.user.display_name }}</td>
+        <td>{{ student.reg_number|default:"—" }}</td>
+        <td>{{ student.programme|default:"—" }}</td>
+        <td>{{ student.department|default:"—" }}</td>
+        <td>{% if student.placement %}{{ student.placement.track }}{% else %}Unplaced{% endif %}</td>
+        <td><a class="text-green-700 underline" href="{% url 'student_edit' student.pk %}">Edit</a></td>
+      </tr>
+    {% empty %}
+      <tr><td class="p-3 text-gray-500" colspan="6">No students yet.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

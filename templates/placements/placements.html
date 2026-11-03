@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-bold">Placements</h1>
+  <a class="bg-green-700 text-white px-3 py-2 rounded" href="{% url 'placement_new' %}">Place a student</a>
+</div>
+<div class="bg-white rounded shadow overflow-x-auto">
+  <table class="w-full text-sm">
+    <tr class="bg-gray-50 text-left"><th class="p-3">Student</th><th>Supervisor</th><th>Track</th><th>Start date</th><th>End date</th><th>Status</th><th></th></tr>
+    {% for placement in placements %}
+      <tr class="border-t">
+        <td class="p-3">{{ placement.student }}</td>
+        <td>{{ placement.supervisor }}</td>
+        <td>{{ placement.track }}</td>
+        <td>{{ placement.start_date }}</td>
+        <td>{{ placement.end_date }}</td>
+        <td>{{ placement.get_status_display }}</td>
+        <td><a class="text-green-700 underline" href="{% url 'placement_edit' placement.pk %}">Edit</a></td>
+      </tr>
+    {% empty %}
+      <tr><td class="p-3 text-gray-500" colspan="7">No placements yet.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
