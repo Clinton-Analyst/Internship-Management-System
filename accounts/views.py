@@ -1,9 +1,25 @@
-from django.http import HttpResponse
+from django.contrib import messages
+from django.contrib.auth import login
+from django.shortcuts import redirect, render
+from .forms import StudentRegisterForm
+from .models import User
 
+HOME = {User.STUDENT: "my_reports", User.SUPERVISOR: "sup_reports", User.ADMIN: "admin_dashboard"}
 
 def home(request):
     if not request.user.is_authenticated:
-        return HttpResponse("Please log in at /login/")
-    return HttpResponse(
-        f"Hello {request.user.display_name}, role: {request.user.role}"
-    )
+        return redirect("login")
+    return redirect(HOME[request.user.role])
+
+def register(request):
+    from placements.models import StudentProfile
+    form = StudentRegisterForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        user = form.save(commit=False)
+        user.role = User.STUDENT
+        user.save()
+        StudentProfile.objects.create(user=user)
+        login(request, user)
+        messages.success(request, "Welcome! Please complete your profile.")
+        return redirect("profile")
+    return render(request, "form.html", {"form": form, "title": "Student registration", "cancel": "/login/"})

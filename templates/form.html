@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block content %}
+<div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+  <h1 class="text-xl font-bold mb-4">{{ title }}</h1>
+  <form method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for f in form %}
+      <div class="mb-4"><label class="block text-sm font-medium mb-1">{{ f.label }}</label>{{ f }}
+        {% if f.help_text %}<div class="text-xs text-gray-500 mt-1">{{ f.help_text|safe }}</div>{% endif %}
+        {% for e in f.errors %}<p class="text-sm text-red-600">{{ e }}</p>{% endfor %}</div>
+    {% endfor %}
+    <button class="bg-green-700 text-white px-4 py-2 rounded">Save</button>
+    <a href="{{ cancel|default:'/' }}" class="ml-3 text-gray-600">Cancel</a>
+  </form></div>
+{% endblock %}

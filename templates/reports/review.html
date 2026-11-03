@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+  <h1 class="text-xl font-bold">{{ report.placement.student }} · Week {{ report.week_number }}</h1>
+  <p class="text-xs text-gray-500 mb-4">Submitted {{ report.submitted_at|date:"d M Y H:i" }}</p>
+  <h3 class="font-semibold">Activities completed</h3><p class="mb-3 whitespace-pre-line">{{ report.activities }}</p>
+  <h3 class="font-semibold">Skills learned</h3><p class="mb-3 whitespace-pre-line">{{ report.skills_learned }}</p>
+  <h3 class="font-semibold">Challenges faced</h3><p class="mb-5 whitespace-pre-line">{{ report.challenges }}</p>
+  <form method="post">{% csrf_token %}
+    <label class="block font-semibold mb-1">Your feedback</label>{{ form.feedback }}
+    {% for e in form.feedback.errors %}<p class="text-sm text-red-600">{{ e }}</p>{% endfor %}
+    <button class="mt-3 bg-green-700 text-white px-4 py-2 rounded">Save &amp; mark reviewed</button>
+    <a class="ml-3 text-gray-600" href="{% url 'sup_reports' %}">Back</a>
+  </form></div>{% endblock %}

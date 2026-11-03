@@ -1,5 +1,33 @@
-<!doctype html><html><head>
-<script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-gray-100"><main class="max-w-6xl mx-auto p-6">
-{% for m in messages %}<p>{{ m }}</p>{% endfor %}
-{% block content %}{% endblock %}</main></body></html>
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Internship Management System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+<nav class="bg-green-800 text-white">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+    <a href="/" class="font-bold">IMS · Chuka</a>
+    {% if user.is_authenticated %}
+      {% if user.role == "student" %}
+        <a href="{% url 'my_reports' %}">My Internship</a><a href="{% url 'profile' %}">Profile</a>
+      {% elif user.role == "supervisor" %}
+        <a href="{% url 'sup_reports' %}">My Interns</a>
+      {% else %}
+        <a href="{% url 'admin_dashboard' %}">Dashboard</a><a href="{% url 'students' %}">Students</a>
+        <a href="{% url 'supervisors' %}">Supervisors</a><a href="{% url 'tracks' %}">Tracks</a>
+        <a href="{% url 'placements' %}">Placements</a>
+      {% endif %}
+      <form method="post" action="{% url 'logout' %}" class="ml-auto">{% csrf_token %}
+        <span class="mr-2 text-sm opacity-80">{{ user.display_name }} ({{ user.role }})</span>
+        <button class="underline">Logout</button></form>
+    {% endif %}
+  </div>
+</nav>
+<main class="max-w-6xl mx-auto px-4 py-6">
+  {% for m in messages %}
+    <div class="mb-4 rounded px-4 py-2 {% if m.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}">{{ m }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</main></body></html>
+

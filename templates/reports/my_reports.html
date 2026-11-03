@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block content %}
+{% if not placement %}
+  <div class="bg-white p-6 rounded shadow"><h1 class="text-xl font-bold mb-2">Waiting for placement</h1>
+  <p>Complete your <a class="text-green-700 underline" href="{% url 'profile' %}">profile</a>; the admin will assign your supervisor and track.</p></div>
+{% else %}
+<div class="bg-white p-5 rounded shadow mb-6 grid sm:grid-cols-4 gap-4 text-sm">
+  <div><div class="text-gray-500">Track</div><b>{{ placement.track }}</b></div>
+  <div><div class="text-gray-500">Supervisor</div><b>{{ placement.supervisor }}</b></div>
+  <div><div class="text-gray-500">Dates</div><b>{{ placement.start_date }} → {{ placement.end_date }}</b></div>
+  <div><div class="text-gray-500">Status</div><b>{{ placement.get_status_display }}</b></div>
+</div>
+<div class="flex justify-between mb-3"><h2 class="text-lg font-bold">My weekly reports</h2>
+  {% if placement.status != "completed" %}<a class="bg-green-700 text-white px-3 py-1 rounded" href="{% url 'report_new' %}">+ New report</a>{% endif %}</div>
+<div class="space-y-3">
+{% for r in reports %}
+  <div class="bg-white p-4 rounded shadow">
+    <div class="flex justify-between"><b>Week {{ r.week_number }}</b>
+      <span class="text-xs px-2 py-1 rounded {% if r.status == 'reviewed' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">{{ r.get_status_display }}</span></div>
+    <p class="text-sm mt-2"><b>Activities:</b> {{ r.activities|truncatechars:160 }}</p>
+    {% if r.feedback %}<p class="text-sm mt-2 bg-gray-50 p-2 rounded"><b>Supervisor feedback:</b> {{ r.feedback }}</p>{% endif %}
+    {% if placement.status != "completed" %}<a class="text-sm text-green-700 underline" href="{% url 'report_edit' r.pk %}">Edit / resubmit</a>{% endif %}
+  </div>
+{% empty %}<p class="text-gray-500">No reports yet.</p>{% endfor %}
+</div>
+{% endif %}{% endblock %}

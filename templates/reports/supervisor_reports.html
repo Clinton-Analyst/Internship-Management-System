@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block content %}
+<h1 class="text-xl font-bold mb-4">My interns</h1>
+<div class="grid sm:grid-cols-3 gap-3 mb-6">
+{% for i in interns %}<div class="bg-white p-4 rounded shadow text-sm"><b>{{ i.student }}</b><br>{{ i.track }} · {{ i.get_status_display }}</div>
+{% empty %}<p class="text-gray-500">No interns assigned.</p>{% endfor %}</div>
+<h2 class="text-lg font-bold mb-2">Pending review ({{ pending|length }})</h2>
+<div class="bg-white rounded shadow overflow-x-auto mb-6"><table class="w-full text-sm">
+{% for r in pending %}<tr class="border-t"><td class="p-3">{{ r.placement.student }}</td><td>Week {{ r.week_number }}</td><td>{{ r.submitted_at|date:"d M H:i" }}</td>
+<td><a class="text-green-700 underline" href="{% url 'report_review' r.pk %}">Review</a></td></tr>
+{% empty %}<tr><td class="p-3 text-gray-500">Nothing pending. Clean sheet!</td></tr>{% endfor %}</table></div>
+<h2 class="text-lg font-bold mb-2">Reviewed ({{ reviewed|length }})</h2>
+<div class="bg-white rounded shadow overflow-x-auto"><table class="w-full text-sm">
+{% for r in reviewed %}<tr class="border-t"><td class="p-3">{{ r.placement.student }}</td><td>Week {{ r.week_number }}</td><td>{{ r.reviewed_at|date:"d M H:i" }}</td>
+<td><a class="text-green-700 underline" href="{% url 'report_review' r.pk %}">View / update</a></td></tr>
+{% empty %}<tr><td class="p-3 text-gray-500">None yet.</td></tr>{% endfor %}</table></div>
+{% endblock %}

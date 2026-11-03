@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block content %}
+<h1 class="text-xl font-bold mb-4">Cohort overview</h1>
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6 text-center">
+  <div class="bg-white p-4 rounded shadow"><div class="text-2xl font-bold">{{ stats.students }}</div>Students</div>
+  <div class="bg-white p-4 rounded shadow"><div class="text-2xl font-bold">{{ stats.supervisors }}</div>Supervisors</div>
+  <div class="bg-white p-4 rounded shadow"><div class="text-2xl font-bold">{{ stats.active }}</div>Active placements</div>
+  <div class="bg-white p-4 rounded shadow"><div class="text-2xl font-bold">{{ stats.pending }}</div>Reports pending</div>
+  <div class="bg-white p-4 rounded shadow"><div class="text-2xl font-bold text-red-600">{{ stats.at_risk }}</div>At risk</div>
+</div>
+<div class="bg-white rounded shadow overflow-x-auto mb-6"><table class="w-full text-sm">
+<tr class="bg-gray-50 text-left"><th class="p-3">Student</th><th>Supervisor</th><th>Track</th><th>Submitted</th><th>Expected</th><th>Flag</th></tr>
+{% for r in rows %}<tr class="border-t"><td class="p-3">{{ r.p.student }}</td><td>{{ r.p.supervisor }}</td><td>{{ r.p.track }}</td>
+<td>{{ r.submitted }}</td><td>{{ r.expected }}</td>
+<td>{% if r.flag == "at_risk" %}<span class="px-2 py-1 rounded bg-red-100 text-red-800">At risk (red card) · {{ r.missing }} missing</span>
+{% elif r.flag == "overdue" %}<span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800">Overdue (yellow card)</span>
+{% elif r.flag == "completed" %}<span class="px-2 py-1 rounded bg-gray-100">Full time</span>
+{% else %}<span class="px-2 py-1 rounded bg-green-100 text-green-800">On track</span>{% endif %}</td></tr>
+{% empty %}<tr><td class="p-3" colspan="6">No placements yet.</td></tr>{% endfor %}</table></div>
+{% if unplaced %}<h2 class="font-bold mb-2">On the bench (unplaced)</h2>
+<ul class="bg-white rounded shadow p-4 text-sm">{% for s in unplaced %}<li>{{ s }} — <a class="text-green-700 underline" href="{% url 'placement_new' %}">Place</a></li>{% endfor %}</ul>{% endif %}
+{% endblock %}
