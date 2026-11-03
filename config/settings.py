@@ -1,10 +1,12 @@
 import os
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-key-change-me")
-DEBUG = os.environ.get("DEBUG", "1") == "1"
+IS_VERCEL = os.environ.get("VERCEL") == "1"
+DEBUG = False if IS_VERCEL else os.environ.get("DEBUG", "1") == "1"
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 CSRF_TRUSTED_ORIGINS = [o for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if o]
 
@@ -34,8 +36,14 @@ TEMPLATES = [{
     ]},
 }]
 WSGI_APPLICATION = "config.wsgi.application"
+DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
+if IS_VERCEL and not DATABASE_URL:
+    raise ImproperlyConfigured(
+        "Set DATABASE_URL in Vercel to a persistent PostgreSQL database. "
+        "SQLite files are not suitable for Vercel deployments."
+    )
 DATABASES = {"default": dj_database_url.config(
-    default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}", conn_max_age=600)}
+    default=DATABASE_URL or f"sqlite:///{BASE_DIR / 'db.sqlite3'}", conn_max_age=600)}
 AUTH_USER_MODEL = "accounts.User"
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
