@@ -9,7 +9,9 @@ HOME = {User.STUDENT: "my_reports", User.SUPERVISOR: "sup_reports", User.ADMIN: 
 def home(request):
     if not request.user.is_authenticated:
         return redirect("login")
-    return redirect(HOME[request.user.role])
+    return render(request, "accounts/home.html", {
+        "dashboard_url": HOME[request.user.role],
+    })
 
 def register(request):
     from placements.models import StudentProfile

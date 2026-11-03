@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Hello {{ user.display_name }}, role: {{ user.role }}</h1>
+<a class="text-green-700 underline" href="{% url dashboard_url %}">Open your dashboard</a>
+{% endblock %}
