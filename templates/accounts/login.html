@@ -9,8 +9,8 @@
         padding: 0.5rem 0.75rem;
     }
     .login-form input:not([type="hidden"]):focus {
-        border-color: #2563eb;
-        outline: 3px solid rgb(37 99 235 / 25%);
+        border-color: #15803d;
+        outline: 3px solid rgb(21 128 61 / 25%);
         outline-offset: 1px;
     }
 </style>
@@ -21,17 +21,17 @@
             {% csrf_token %}
             {{ form.as_p }}
             <input type="hidden" name="next" value="{{ next }}">
-            <button type="submit" class="w-full rounded bg-blue-600 px-4 py-2 text-white">
+            <button type="submit" class="w-full rounded bg-green-700 px-4 py-2 text-white hover:bg-green-800">
                 Log in
             </button>
         </form>
         <p class="mt-6 text-center text-sm text-gray-600">
             New student?
-            <a href="{% url 'register' %}" class="font-semibold text-blue-700 underline">Create an account</a>
+            <a href="{% url 'register' %}" class="font-semibold text-green-800 underline hover:text-green-900">Create an account</a>
         </p>
         <p class="mt-2 text-center text-sm text-gray-600">
             Supervisor?
-            <a href="{% url 'register_supervisor' %}" class="font-semibold text-blue-700 underline">Register here</a>
+            <a href="{% url 'register_supervisor' %}" class="font-semibold text-green-800 underline hover:text-green-900">Register here</a>
         </p>
     </section>
 </div>
