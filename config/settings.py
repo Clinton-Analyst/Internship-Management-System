@@ -2,8 +2,11 @@ import os
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env.local")
+load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-key-change-me")
 IS_VERCEL = os.environ.get("VERCEL") == "1"
 DEBUG = False if IS_VERCEL else os.environ.get("DEBUG", "1") == "1"
@@ -43,7 +46,8 @@ if IS_VERCEL and not DATABASE_URL:
         "SQLite files are not suitable for Vercel deployments."
     )
 DATABASES = {"default": dj_database_url.config(
-    default=DATABASE_URL or f"sqlite:///{BASE_DIR / 'db.sqlite3'}", conn_max_age=600)}
+    default=DATABASE_URL or f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+    conn_max_age=0 if IS_VERCEL else 600)}
 AUTH_USER_MODEL = "accounts.User"
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
