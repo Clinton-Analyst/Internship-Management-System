@@ -1,9 +1,33 @@
 from django.test import TestCase
 from django.urls import reverse
 from .models import User
+from placements.models import Placement, StudentProfile
 
 
 class DayTwoAccountTests(TestCase):
+    def test_login_links_to_student_registration(self):
+        response = self.client.get(reverse("login"))
+
+        self.assertContains(response, reverse("register"))
+        self.assertContains(response, "Create an account")
+
+    def test_registration_creates_student_without_placement(self):
+        response = self.client.post(reverse("register"), {
+            "username": "newstudent",
+            "first_name": "New",
+            "last_name": "Student",
+            "email": "newstudent@example.com",
+            "password1": "Test-registration-pass-482!",
+            "password2": "Test-registration-pass-482!",
+        })
+
+        user = User.objects.get(username="newstudent")
+        profile = StudentProfile.objects.get(user=user)
+        self.assertEqual(user.role, User.STUDENT)
+        self.assertFalse(Placement.objects.filter(student=profile).exists())
+        self.assertRedirects(response, reverse("profile"))
+        self.assertEqual(self.client.get(reverse("profile")).status_code, 200)
+
     def test_admin_add_user_form_includes_role(self):
         admin_user = User.objects.create_superuser(
             username="siteadmin",
