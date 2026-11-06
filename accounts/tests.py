@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from .models import User
-from placements.models import Placement, StudentProfile
+from placements.models import Placement, StudentProfile, SupervisorProfile
 
 
 class DayTwoAccountTests(TestCase):
@@ -27,6 +27,34 @@ class DayTwoAccountTests(TestCase):
         self.assertFalse(Placement.objects.filter(student=profile).exists())
         self.assertRedirects(response, reverse("profile"))
         self.assertEqual(self.client.get(reverse("profile")).status_code, 200)
+
+    def test_login_links_to_supervisor_registration(self):
+        response = self.client.get(reverse("login"))
+
+        self.assertContains(response, reverse("register_supervisor"))
+        self.assertContains(response, "Register here")
+
+    def test_supervisor_registration_creates_profile_without_elevating_role(self):
+        response = self.client.post(reverse("register_supervisor"), {
+            "username": "newsupervisor",
+            "first_name": "New",
+            "last_name": "Supervisor",
+            "email": "supervisor@example.com",
+            "organisation": "Example Organisation",
+            "phone": "+254 700 000000",
+            "password1": "Test-supervisor-pass-482!",
+            "password2": "Test-supervisor-pass-482!",
+            "role": User.ADMIN,
+            "is_superuser": "on",
+        })
+
+        user = User.objects.get(username="newsupervisor")
+        profile = SupervisorProfile.objects.get(user=user)
+        self.assertEqual(user.role, User.SUPERVISOR)
+        self.assertFalse(user.is_superuser)
+        self.assertEqual(profile.organisation, "Example Organisation")
+        self.assertEqual(profile.phone, "+254 700 000000")
+        self.assertRedirects(response, reverse("sup_reports"))
 
     def test_admin_add_user_form_includes_role(self):
         admin_user = User.objects.create_superuser(
