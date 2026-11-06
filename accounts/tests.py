@@ -1,10 +1,41 @@
+import re
+from urllib.parse import urlsplit
+from django.core import mail
 from django.test import TestCase
+from django.test import override_settings
 from django.urls import reverse
 from .models import User
 from placements.models import Placement, StudentProfile, SupervisorProfile
 
 
 class DayTwoAccountTests(TestCase):
+    @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+    def test_password_reset_email_token_changes_password(self):
+        user = User.objects.create_user(
+            username="resetuser",
+            email="resetuser@example.com",
+            password="Original-password-482!",
+        )
+
+        response = self.client.post(reverse("password_reset"), {"email": user.email})
+
+        self.assertRedirects(response, reverse("password_reset_done"))
+        self.assertEqual(len(mail.outbox), 1)
+        reset_link = re.search(r"https?://[^\s]+", mail.outbox[0].body)
+        self.assertIsNotNone(reset_link)
+
+        response = self.client.get(urlsplit(reset_link.group()).path, follow=True)
+        self.assertContains(response, "Choose a new password")
+        response = self.client.post(response.request["PATH_INFO"], {
+            "new_password1": "New-reset-password-975!",
+            "new_password2": "New-reset-password-975!",
+        })
+
+        self.assertRedirects(response, reverse("password_reset_complete"))
+        user.refresh_from_db()
+        self.assertTrue(user.check_password("New-reset-password-975!"))
+        self.assertFalse(user.check_password("Original-password-482!"))
+
     def test_login_links_to_student_registration(self):
         response = self.client.get(reverse("login"))
 

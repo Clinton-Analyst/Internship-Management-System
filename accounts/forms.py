@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm, UserCreationForm
 from .models import User
 
 class TailwindMixin:
@@ -35,3 +35,11 @@ class SupervisorRegisterForm(TailwindMixin, UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "first_name", "last_name", "email"]
+
+
+class StyledPasswordResetForm(TailwindMixin, PasswordResetForm):
+    pass
+
+
+class StyledSetPasswordForm(TailwindMixin, SetPasswordForm):
+    pass
